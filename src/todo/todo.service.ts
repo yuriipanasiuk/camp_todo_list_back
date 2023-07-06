@@ -13,7 +13,7 @@ export class TodoService {
     @InjectModel(Todo.name) private todoModel: mongoose.Model<Todo>,
   ) {}
 
-  async findAll(page = 1, limit = 5): Promise<ITodoPaginationResult> {
+  async findAll(page = 1, limit = 20): Promise<ITodoPaginationResult> {
     const skip = (page - 1) * limit;
     const count = await this.todoModel.count();
     const page_total = Math.ceil(count / limit);
