@@ -1,7 +1,6 @@
 export interface ITodo {
   title: string;
   description: string;
-  isPrivate: boolean;
   isComplete: boolean;
 }
 

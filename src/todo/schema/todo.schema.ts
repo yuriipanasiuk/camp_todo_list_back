@@ -13,9 +13,6 @@ export class Todo {
   description: string;
 
   @Prop({ default: false })
-  isPrivate: boolean;
-
-  @Prop({ default: false })
   isComplete: boolean;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
