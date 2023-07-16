@@ -5,7 +5,7 @@ import { Todo } from './schema/todo.schema';
 import { CreateTodoDto } from './dto/create.todo.dto';
 import { ITodo, ITodoPaginationResult } from './interface/todo.interface';
 import { CompleteTodoDto } from './dto/complete.todo.dto';
-import { PrivateTodoDto } from './dto/private.todo.dto';
+import { IUser } from 'src/user/interface/user.interface';
 
 @Injectable()
 export class TodoService {
@@ -13,12 +13,16 @@ export class TodoService {
     @InjectModel(Todo.name) private todoModel: mongoose.Model<Todo>,
   ) {}
 
-  async findAll(page = 1, limit = 20): Promise<ITodoPaginationResult> {
+  async findAll(
+    page = 1,
+    limit = 20,
+    user: IUser,
+  ): Promise<ITodoPaginationResult> {
     const skip = (page - 1) * limit;
     const count = await this.todoModel.count();
     const page_total = Math.ceil(count / limit);
     const todos = await this.todoModel
-      .find()
+      .find({ owner: user.id })
       .skip(skip)
       .limit(limit)
       .populate('owner', '_id email');
@@ -26,8 +30,8 @@ export class TodoService {
     return { todos: todos, page_total: page_total };
   }
 
-  async create(dto: CreateTodoDto): Promise<ITodo> {
-    const todo = await this.todoModel.create(dto);
+  async create(dto: CreateTodoDto, user: IUser): Promise<ITodo> {
+    const todo = await this.todoModel.create({ ...dto, owner: user.id });
     return todo.save();
   }
 
@@ -51,19 +55,6 @@ export class TodoService {
   }
 
   async changeComplete(id: string, dto: CompleteTodoDto): Promise<ITodo> {
-    const todo = await this.todoModel.findByIdAndUpdate(id, dto, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!todo) {
-      throw new NotFoundException('Todo not found!');
-    }
-
-    return todo;
-  }
-
-  async changePrivate(id: string, dto: PrivateTodoDto): Promise<ITodo> {
     const todo = await this.todoModel.findByIdAndUpdate(id, dto, {
       new: true,
       runValidators: true,

@@ -1,10 +1,11 @@
-import { Document } from 'mongoose';
+export interface IUser {
+  id?: string;
+  name: string;
+  email: string;
+  password: string;
+}
 
-export interface IUser extends Document {
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly email: string;
-  readonly password: string;
-  readonly accessToken: string;
-  readonly refreshToken: string;
+export interface UserJwtPayload {
+  email: string;
+  id: string;
 }
