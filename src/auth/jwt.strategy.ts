@@ -6,9 +6,9 @@ import { UserJwtPayload } from 'src/user/interface/user.interface';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private configService: ConfigService,
+    readonly configService: ConfigService,
     private readonly userService: UserService,
   ) {
     super({

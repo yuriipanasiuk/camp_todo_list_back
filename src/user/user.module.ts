@@ -6,7 +6,7 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
-import { AccessTokenStrategy } from 'src/auth/accessToken.strategy';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
 
 const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
@@ -24,7 +24,7 @@ const jwtFactory = {
     PassportModule.register({ defaultStrategy: 'jwt' }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
-  providers: [UserService, AccessTokenStrategy],
+  providers: [UserService, JwtStrategy],
   controllers: [UserController],
   exports: [UserService],
 })
