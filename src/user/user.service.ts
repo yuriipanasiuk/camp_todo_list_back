@@ -59,7 +59,7 @@ export class UserService {
     }
 
     const id = user._id.toString();
-    const payload: UserPayloadDto = { id };
+    const payload: UserPayloadDto = { email, id };
     const accessToken: string = this.jwtService.sign(payload);
 
     await this.userModel.findByIdAndUpdate(user._id, {
