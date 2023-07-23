@@ -1,7 +1,6 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create.user.dto';
-import { IUser } from './interface/user.interface';
 import { UserCredentialDto } from './dto/credential.user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -10,12 +9,12 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/signup')
-  register(@Body() dto: CreateUserDto): Promise<IUser> {
+  register(@Body() dto: CreateUserDto) {
     return this.userService.singUp(dto);
   }
 
   @Post('/signin')
-  login(@Body() dto: UserCredentialDto): Promise<{ accessToken: string }> {
+  login(@Body() dto: UserCredentialDto) {
     return this.userService.singIn(dto);
   }
 

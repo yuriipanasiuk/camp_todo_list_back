@@ -6,12 +6,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { IUser } from './interface/user.interface';
 import { CreateUserDto } from './dto/create.user.dto';
 import { User } from './schemas/user.schema';
 import { UserPayloadDto } from './dto/payload.user.dto';
-import { JwtService } from '@nestjs/jwt';
 import { UserCredentialDto } from './dto/credential.user.dto';
+import { LoginResponseDto } from './dto/login.response.dto';
 
 @Injectable()
 export class UserService {
@@ -39,7 +40,7 @@ export class UserService {
     return user.save();
   }
 
-  async singIn(dto: UserCredentialDto): Promise<{ accessToken: string }> {
+  async singIn(dto: UserCredentialDto): Promise<LoginResponseDto> {
     const email: string = dto.email;
     const user = await this.userModel.findOne({ email });
 
@@ -58,11 +59,20 @@ export class UserService {
     }
 
     const id = user._id.toString();
-    const payload: UserPayloadDto = { email, id };
+    const payload: UserPayloadDto = { id };
     const accessToken: string = this.jwtService.sign(payload);
-    await this.userModel.findByIdAndUpdate(user._id, { accessToken });
 
-    return { accessToken };
+    await this.userModel.findByIdAndUpdate(user._id, {
+      accessToken,
+    });
+
+    const response = {
+      name: user.name,
+      email: user.email,
+      accessToken,
+    };
+
+    return response;
   }
 
   async findUserByEmail(email: string): Promise<IUser | null> {
