@@ -2,17 +2,19 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from './interface/user.interface';
+import { IPayload, IRefresh, IUser } from './interface/user.interface';
 import { CreateUserDto } from './dto/create.user.dto';
 import { User } from './schemas/user.schema';
 import { UserPayloadDto } from './dto/payload.user.dto';
 import { UserCredentialDto } from './dto/credential.user.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
 export class UserService {
@@ -59,27 +61,59 @@ export class UserService {
     }
 
     const id = user._id.toString();
-    const payload: UserPayloadDto = { email, id };
+    const payload: UserPayloadDto = { _id: id };
     const accessToken: string = this.jwtService.sign(payload);
+    const refreshToken: string = this.jwtService.sign(payload, {
+      expiresIn: '7d',
+    });
 
     await this.userModel.findByIdAndUpdate(user._id, {
       accessToken,
+      refreshToken,
     });
 
     const response = {
       name: user.name,
       email: user.email,
       accessToken,
+      refreshToken,
     };
 
     return response;
   }
 
-  async findUserByEmail(email: string): Promise<IUser | null> {
-    return this.userModel.findOne({ email });
+  async findUserByEmail(_id: string): Promise<IUser> {
+    return this.userModel.findOne({ _id });
   }
 
   async logOut(user: IUser) {
-    await this.userModel.findByIdAndUpdate(user.id, { accessToken: '' });
+    await this.userModel.findByIdAndUpdate(user.id, {
+      accessToken: '',
+      refreshToken: '',
+    });
+  }
+
+  async refresh(dto: RefreshDto): Promise<IRefresh> {
+    const { refreshToken: token } = dto;
+
+    const user = await this.userModel.findOne({ refreshToken: token });
+
+    if (!user) {
+      throw new ForbiddenException('Token invalid');
+    }
+
+    const id = user._id.toString();
+    const payload: IPayload = { _id: id };
+    const accessToken: string = this.jwtService.sign(payload);
+    const refreshToken: string = this.jwtService.sign(payload, {
+      expiresIn: '7d',
+    });
+
+    await this.userModel.findByIdAndUpdate(id, {
+      accessToken,
+      refreshToken,
+    });
+
+    return { accessToken, refreshToken };
   }
 }

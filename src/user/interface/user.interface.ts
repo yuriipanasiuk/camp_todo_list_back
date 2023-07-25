@@ -7,6 +7,14 @@ export interface IUser {
 
 export interface UserJwtPayload {
   email: string;
-  id: string;
+  _id: string;
 }
 
+export interface IPayload {
+  _id: string;
+}
+
+export interface IRefresh {
+  accessToken: string;
+  refreshToken: string;
+}

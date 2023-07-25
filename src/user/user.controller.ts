@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UserCredentialDto } from './dto/credential.user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Controller('user')
 export class UserController {
@@ -22,5 +23,10 @@ export class UserController {
   @Post('/logout')
   logout(@Request() req: any) {
     this.userService.logOut(req.user);
+  }
+
+  @Post('/refresh')
+  refreshToken(@Body() dto: RefreshDto) {
+    return this.userService.refresh(dto);
   }
 }

@@ -1,4 +1,4 @@
 export class UserPayloadDto {
-  readonly email: string;
-  readonly id: string;
+  // readonly email: string;
+  readonly _id: string;
 }
