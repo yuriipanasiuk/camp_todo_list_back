@@ -6,7 +6,6 @@ export interface IUser {
 }
 
 export interface UserJwtPayload {
-  email: string;
   _id: string;
 }
 

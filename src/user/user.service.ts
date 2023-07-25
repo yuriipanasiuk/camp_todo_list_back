@@ -64,7 +64,7 @@ export class UserService {
     const payload: UserPayloadDto = { _id: id };
     const accessToken: string = this.jwtService.sign(payload);
     const refreshToken: string = this.jwtService.sign(payload, {
-      expiresIn: '7d',
+      expiresIn: '7h',
     });
 
     await this.userModel.findByIdAndUpdate(user._id, {
@@ -82,7 +82,7 @@ export class UserService {
     return response;
   }
 
-  async findUserByEmail(_id: string): Promise<IUser> {
+  async findUserById(_id: string): Promise<IUser> {
     return this.userModel.findOne({ _id });
   }
 
@@ -106,7 +106,7 @@ export class UserService {
     const payload: IPayload = { _id: id };
     const accessToken: string = this.jwtService.sign(payload);
     const refreshToken: string = this.jwtService.sign(payload, {
-      expiresIn: '7d',
+      expiresIn: '7h',
     });
 
     await this.userModel.findByIdAndUpdate(id, {
