@@ -116,4 +116,10 @@ export class UserService {
 
     return { accessToken, refreshToken };
   }
+
+  async getCurrent(user: IUser) {
+    const { email } = user;
+    const response = await this.userModel.findOne({ email });
+    return { name: response.name, email: response.email };
+  }
 }
