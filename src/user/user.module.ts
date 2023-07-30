@@ -12,7 +12,7 @@ const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
     secret: configService.get('JWT_SECRET'),
     signOptions: {
-      expiresIn: configService.get('JWT_EXP_S'),
+      expiresIn: configService.get('JWT_EXP_H'),
     },
   }),
   inject: [ConfigService],
