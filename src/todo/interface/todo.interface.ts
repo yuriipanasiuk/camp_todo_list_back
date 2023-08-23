@@ -7,6 +7,7 @@ export interface ITodo {
 export interface IPagination {
   page: number;
   limit: number;
+  type: string;
 }
 
 export interface ITodoPaginationResult {

@@ -17,12 +17,26 @@ export class TodoService {
     page = 1,
     limit = 20,
     user: IUser,
+    type: string,
   ): Promise<ITodoPaginationResult> {
     const skip = (page - 1) * limit;
     const count = await this.todoModel.count();
     const page_total = Math.ceil(count / limit);
+    const findQuery: any = { owner: user.id };
+
+    switch (type) {
+      case 'all':
+        break;
+      case 'complete':
+        findQuery.isComplete = true;
+        break;
+
+      default:
+        break;
+    }
+
     const todos = await this.todoModel
-      .find({ owner: user.id })
+      .find(findQuery)
       .skip(skip)
       .limit(limit)
       .populate('owner', '_id email');

@@ -28,10 +28,10 @@ export class TodoController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   getAllTodos(
-    @Query() { page, limit }: IPagination,
+    @Query() { page, limit, type = 'all' }: IPagination,
     @Request() req: any,
   ): Promise<ITodoPaginationResult> {
-    return this.todoService.findAll(page, limit, req.user);
+    return this.todoService.findAll(page, limit, req.user, type);
   }
 
   @Get(':id')
