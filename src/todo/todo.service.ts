@@ -31,6 +31,10 @@ export class TodoService {
         findQuery.isComplete = true;
         break;
 
+      case 'active':
+        findQuery.isComplete = false;
+        break;
+
       default:
         break;
     }
